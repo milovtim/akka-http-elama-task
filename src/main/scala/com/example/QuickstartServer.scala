@@ -22,10 +22,11 @@ object QuickstartServer extends HttpClient with App {
     pathPrefix("yesno") {
       pathEnd {
         get {
-          onComplete(yesno(req)) {
-            case Success(yn) => complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, yn.image))
-            case Failure(e) => complete(StatusCodes.InternalServerError -> e.getMessage)
-          }
+//          onComplete(yesno(req)) {
+//            case Success(yn) => complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, yn.image))
+//            case Failure(e) => complete(StatusCodes.InternalServerError -> e.getMessage)
+//          }
+          complete("hello")
         }
       }
     }
