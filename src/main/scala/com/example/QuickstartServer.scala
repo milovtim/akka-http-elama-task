@@ -2,7 +2,8 @@ package com.example
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCode, StatusCodes}
+import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.headers.`Content-Type`
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.get
@@ -12,6 +13,10 @@ import akka.util.Timeout
 import scala.concurrent.Await
 import scala.concurrent.duration.{Duration, DurationInt}
 import scala.util.{Failure, Success}
+import spray.json._
+import com.example.MyJson
+
+
 
 object QuickstartServer extends HttpClient with App {
 
@@ -19,14 +24,13 @@ object QuickstartServer extends HttpClient with App {
   implicit lazy val timeout = Timeout(5.seconds)
 
   lazy val routes: Route =
-    pathPrefix("yesno") {
+    pathSingleSlash {
       pathEnd {
         get {
-//          onComplete(yesno(req)) {
-//            case Success(yn) => complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, yn.image))
-//            case Failure(e) => complete(StatusCodes.InternalServerError -> e.getMessage)
-//          }
-          complete("hello")
+          onComplete(requestDataAndMergeResults(Seq(1,2,3))) {
+            case Success(res) => complete(StatusCodes.OK -> HttpEntity(ContentTypes.`application/json`, res))
+            case Failure(e) => complete(StatusCodes.InternalServerError -> e.getMessage)
+          }
         }
       }
     }

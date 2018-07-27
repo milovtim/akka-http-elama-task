@@ -29,13 +29,23 @@ object HttpTests extends App with HttpClient {
     }
     .onComplete(_ => system.terminate())
 */
+
+  /*
   requestDataAndMergeResults(Seq(1,2,3))
     .andThen {
       case Success(res) => println(res)
       case Failure(ex) => println(ex.getMessage)
     }
     .onComplete(_ => system.terminate())
+*/
 
-//  parseCollectedResult
-//  system.terminate()
+  (1 to 20).foreach[Unit] { i =>
+    requestDataAndMergeResults(Seq(1,2,3))
+      .andThen {
+        case Success(res) => println(s"Result: $res")
+        case Failure(ex) => println(s"Result error: ${ex.getMessage}")
+      }
+    ()
+  }
+  //    .onComplete(_ => system.terminate())
 }
