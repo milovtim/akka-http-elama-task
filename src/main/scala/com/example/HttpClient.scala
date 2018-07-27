@@ -53,12 +53,15 @@ trait HttpClient extends MyJson with SprayJsonSupport {
     val combinedFuture = Future.foldLeft(List(impressions(campIds), prices(campIds)))(List.empty[Any])(_ :: List(_))
 
     combinedFuture.map { lst =>
-      lst.fold(Nil) { (a, b) =>
-
-      }
+      val ordered = lst.sortWith { (a, b) => a.isInstanceOf[IntToIntResult] }
+      val impr = ordered.head.asInstanceOf[IntToIntResult].results
+      val prices = ordered(1).asInstanceOf[IntToDoubleResult].results
+      (for (
+        k <- impr.keys ++ prices.keys
+        if impr.isDefinedAt(k) && prices.isDefinedAt(k)) //берём ключи, которые есть в обеих мапах
+        yield (k, SummaryResult(impr(k), prices(k), impr(k) * prices(k)))
+      ).toMap
     }
-
-    Future.failed(new RuntimeException)
   }
 
 
@@ -70,7 +73,6 @@ trait HttpClient extends MyJson with SprayJsonSupport {
     "spent": 8.83
   }
 }"""
-
     val yn = data.parseJson.convertTo[Map[String, SummaryResult]]
     println(yn)
   }

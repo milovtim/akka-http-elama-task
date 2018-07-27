@@ -21,14 +21,20 @@ object HttpTests extends App with HttpClient {
 //    )
 //  system.scheduler.scheduleOnce(5.seconds) { system.terminate() }
 
-///*
+/*
     yesnoConcat
     .andThen {
       case Success(yn) => println(yn)
       case Failure(e) => println(e.getMessage)
     }
     .onComplete(_ => system.terminate())
-//*/
+*/
+  requestDataAndMergeResults(Seq(1,2,3))
+    .andThen {
+      case Success(res) => println(res)
+      case Failure(ex) => println(ex.getMessage)
+    }
+    .onComplete(_ => system.terminate())
 
 //  parseCollectedResult
 //  system.terminate()
