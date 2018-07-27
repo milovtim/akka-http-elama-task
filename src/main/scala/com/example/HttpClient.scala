@@ -18,9 +18,9 @@ final case class SummaryResult(impressions: Int, price: Double, spent: Double)
 
 
 trait MyJson extends DefaultJsonProtocol {
-  implicit val summaryResultFormat = jsonFormat3(SummaryResult)
-  implicit val impressionsFormat = jsonFormat1(IntToIntResult)
-  implicit val pricesFormat = jsonFormat1(IntToDoubleResult)
+  implicit val summaryResultFormat: RootJsonFormat[SummaryResult] = jsonFormat3(SummaryResult)
+  implicit val impressionsFormat: RootJsonFormat[IntToIntResult] = jsonFormat1(IntToIntResult)
+  implicit val pricesFormat: RootJsonFormat[IntToDoubleResult] = jsonFormat1(IntToDoubleResult)
 }
 
 
@@ -42,7 +42,7 @@ trait HttpClient extends MyJson with SprayJsonSupport {
         if (resp.status == StatusCodes.OK)
           entBytesFuture
         else {
-          println(s"imprs: status code: ${resp.status}")
+//          println(s"imprs: status code: ${resp.status}")
           entBytesFuture.value.getOrElse(Success(ByteString.empty)) match {
             case Success(byteStr) => Future.failed(new RuntimeException(byteStr.utf8String))
             case Failure(ex) => Future.failed(ex)
@@ -53,7 +53,7 @@ trait HttpClient extends MyJson with SprayJsonSupport {
   }
 
 
-  //пока дублирование кода
+  //ага, дублирование кода
   def prices(ids: Seq[Int]): Future[IntToDoubleResult] = {
     val r = HttpRequest(uri = uri.withPath(Path("/prices")).withQuery(Uri.Query(ids.map(i => "id"-> s"$i"): _*)))
     http.singleRequest(r)
@@ -62,7 +62,7 @@ trait HttpClient extends MyJson with SprayJsonSupport {
         if (resp.status == StatusCodes.OK)
           entBytesFuture
         else {
-          println(s"prices: status code: ${resp.status}")
+//          println(s"prices: status code: ${resp.status}")
           entBytesFuture.value.getOrElse(Success(ByteString.empty)) match {
             case Success(byteStr) => Future.failed(new RuntimeException(byteStr.utf8String))
             case Failure(ex) => Future.failed(ex)
