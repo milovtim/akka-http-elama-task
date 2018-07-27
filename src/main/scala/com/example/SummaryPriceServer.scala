@@ -14,7 +14,7 @@ object SummaryPriceServer extends HttpApp with App with HttpClient {
   override implicit val system: ActorSystem = ActorSystem("elama-task-server")
 
   override lazy val routes: Route =
-    pathSingleSlash {
+    path("stats") {
       pathEnd {
         get {
           parameters('id.as(PredefinedFromStringUnmarshallers.intFromStringUnmarshaller).*) { ids =>
